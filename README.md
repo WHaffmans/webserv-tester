@@ -48,19 +48,18 @@ Tests are organized into features suites:
 - **Performance**: Load and performance testing
 - **Error**: Error handling and custom error pages
 
-> **Warning**: A lot of tests have been written with LLM and may contain some errors. Please review them carefully. They could also be too permissive and return false positives.
+> **Warning**: A lot of tests have been written with LLM and may contain some errors. Please **review tests carefully**. They could also be too permissive and return false positives.
 
-> **Warning**: Tests are relatively strict. A lot of them are not asked in the subject. They are here to help you to implement a robust server. For example, the `InvalidConfigFileTests` ask for quite precise error log messages.
+> **Warning**: Tests are relatively **strict**. A lot of them are not asked in the subject. They are here to help you to implement a robust server. For example, the `InvalidConfigFileTests` ask for quite precise error log messages.
 
-## ⚠️ Controlled Testing Environment
-This tester is designed to run webserv in a controlled environment with the specific configuration file (`data/conf/test.conf`) and dedicated server files directory (`data/`).
+> **Warning**: This tester is designed to run webserv in a controlled **environment** with the specific configuration file (`data/conf/test.conf`) and dedicated server files directory (`data/`).
 
 ## 📊 Logging
 
 The framework provides detailed logging:
 
 - Console output: Concise test results with colorful indicators
-- Failed tests: Separate log files for failed tests with details
+- List of fails: Separate log files for failed tests with details
 - Log files: Detailed information stored in `logs/` directory
 - Test source code: For single test runs, the test source code is included in the logs for easier debugging
 
