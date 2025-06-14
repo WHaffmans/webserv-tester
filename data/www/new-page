@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Page After Redirect</title>
+</head>
+<body>
+    <p>Tester should get this page after the redirect.</p>
+</body>
+</html>

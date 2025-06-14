@@ -1,0 +1,11 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+logs/*
+
+# Test-generated files
+data/uploads/*
+.DS_Store

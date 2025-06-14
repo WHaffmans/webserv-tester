@@ -1,0 +1,10 @@
+#!/bin/sh
+echo "Content-Type: text/plain"
+echo "Set-Cookie: cookie1=value1; Path=/"
+echo "Set-Cookie: cookie2=value2; Path=/"
+echo "Set-Cookie: cookie3=value3; Path=/"
+echo ""
+echo "Multiple Cookie Set Script"
+echo "=========================="
+echo ""
+echo "Set cookies: cookie1, cookie2, cookie3"

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Destination with Query</title>
+</head>
+
+<body>
+    <h1>Destination Page</h1>
+    <p>This is a destination page that can receive query parameters.</p>
+    <p>Query parameters received: param1=value1&param2=value2</p>
+    <!-- Test: destination_with_query -->
+</body>
+
+</html>
