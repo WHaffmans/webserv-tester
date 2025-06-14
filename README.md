@@ -36,18 +36,7 @@ usage: run_tests.py [-h] [--server-path SERVER_PATH] [--host HOST]
 
 ## 🗂️ Test Suite
 
-Tests are organized into features suites:
-
-- **Basic**: Fundamental server functionality (smoke tests)
-- **HTTP**: HTTP protocol compliance tests
-- **Config**: Configuration file parsing and application
-- **Edge**: Edge cases and boundary testing
-- **Method**: HTTP methods (GET, POST, etc.) implementation
-- **CGI**: Common Gateway Interface functionality
-- **Upload**: File upload handling
-- **Security**: Security features and vulnerability testing
-- **Performance**: Load and performance testing
-- **Error**: Error handling and custom error pages
+Tests are organized into features suites: Basic, HTTP, Config, Edge, Method, CGI, Upload, Security, Performance, and Error. You can run all tests or select specific suites.
 
 > **Warning**: A lot of tests have been written with LLM and may contain some errors. Please **review tests carefully**. They could also be too permissive and return false positives.
 
@@ -74,6 +63,6 @@ The tester has been designed to be used as:
 4. Analyze logs in logs file. The test implementation source code is also included in log to check if it is well implemented and to have a better understanding of why it failed
 5. Fix the bug in your webserv implementation
 
-## Contributing
+## 📝 Contributing
 
 Contributions for adding new tests, improving existing ones, or enhancing the framework itself are welcome! Please read the [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute.
