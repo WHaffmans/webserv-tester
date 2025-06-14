@@ -10,6 +10,7 @@ import subprocess
 import os
 import signal
 import time
+import socket
 import psutil
 from pathlib import Path
 from core.logger import get_logger
@@ -33,34 +34,29 @@ class ServerManager:
         self.stdout_file = None
         self.stderr_file = None
     
-    def check_existing_processes(self):
+    def check_port_availability(self):
         """
-        Check if there are existing webserv processes running.
+        Check if the ports used by the webserver are available.
+        Based on the test.conf file, checks ports 8080, 8081, and 8082.
         
         Returns:
-            list: List of existing webserv processes
+            list: List of ports that are not available (already in use)
         """
-        existing_processes = []
+        ports_to_check = [8080, 8081, 8082]  # Ports from test.conf
+        unavailable_ports = []
         
-        try:
-            for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
-                try:
-                    proc_info = proc.info
-                    
-                    # Skip our own process
-                    if proc.pid == os.getpid():
-                        continue
-                    
-                    # Simple check: process name is exactly 'webserv'
-                    if proc_info['name'] == 'webserv':
-                        existing_processes.append(proc_info)
-                            
-                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                    continue
-        except Exception as e:
-            self.logger.debug(f"Error checking existing processes: {e}")
+        for port in ports_to_check:
+            try:
+                # Try to bind to the port
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                    result = sock.bind(('localhost', port))
+                    # If we get here, the port is available
+            except OSError:
+                # Port is already in use
+                unavailable_ports.append(port)
         
-        return existing_processes
+        return unavailable_ports
     
     def start(self, timeout=5):
         """
@@ -72,16 +68,14 @@ class ServerManager:
         Returns:
             bool: True if server started successfully, False otherwise
         """
-        # Check for existing webserv processes first
-        existing_processes = self.check_existing_processes()
-        if existing_processes:
-            self.logger.error(f"{Emoji.ERROR} Found existing webserv processes running:")
-            for proc in existing_processes:
-                pid = proc['pid']
-                cmdline = ' '.join(proc['cmdline']) if proc['cmdline'] else proc['name']
-                self.logger.error(f"{Colors.RED}  PID {pid}: {cmdline}{Colors.RESET}")
-            self.logger.error(f"{Colors.RED}Please stop all existing webserv processes before running tests.{Colors.RESET}")
-            self.logger.error(f"{Colors.YELLOW}  You can use: pkill -f webserv {Colors.RESET}")
+        # Check if required ports are available first
+        unavailable_ports = self.check_port_availability()
+        if unavailable_ports:
+            self.logger.error(f"{Emoji.ERROR} Found ports already in use:")
+            for port in unavailable_ports:
+                self.logger.error(f"{Colors.RED}  Port {port} is already in use{Colors.RESET}")
+            self.logger.error(f"{Colors.RED}Please free up these ports before running tests.{Colors.RESET}")
+            self.logger.error(f"{Colors.YELLOW}  You can check what's using a port with: lsof -i :{unavailable_ports[0]} {Colors.RESET}")
             return False
         
         if self.process is not None:
