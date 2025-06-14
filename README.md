@@ -36,7 +36,7 @@ usage: run_tests.py [-h] [--server-path SERVER_PATH] [--host HOST]
 
 ## 🗂️ Test Suite
 
-Tests are organized into features suites: Basic, HTTP, Config, Edge, Method, CGI, Upload, Security, Performance, and Error. You can run all tests or select specific suites.
+Tests are organized into features suites: Basic, HTTP, Config, Invalid Config, Method, CGI, Upload, Security, Performance, and Error. You can run all tests or select specific suites.
 
 > **Warning**: A lot of tests have been written with LLM and may contain some errors. Please **review tests carefully**. They could also be too permissive and return false positives.
 
@@ -49,7 +49,6 @@ Tests are organized into features suites: Basic, HTTP, Config, Edge, Method, CGI
 The framework provides detailed logging:
 
 - Console output: Concise test results with colorful indicators
-- List of fails: Separate log files for failed tests with details
 - Log files: Detailed information stored in `logs/` directory
 - Test source code: For single test runs, the test source code is included in the logs for easier debugging
 
