@@ -14,11 +14,8 @@ import logging
 from pathlib import Path
 
 # Constants for directory structure
-DIRS_TO_CREATE = ["logs", "tests_suites"]
+DIRS_TO_CREATE = ["logs", "tests_suites", "data/uploads"]
 REQUIRED_PACKAGES = ["requests", "psutil"]
-
-# Essential directories that must exist but don't need specific files checked
-ESSENTIAL_DIRS = ["data/uploads"]
 
 # Required files (implies their parent directories must exist)
 REQUIRED_FILES = [
@@ -47,19 +44,6 @@ def check_and_create_directories():
         if not full_path.exists():
             print(f"Creating directory: {full_path}")
             full_path.mkdir(parents=True, exist_ok=True)
-    
-    # Check essential directories that must exist
-    missing_dirs = []
-    for dir_path in ESSENTIAL_DIRS:
-        full_path = tester_root / dir_path
-        if not full_path.exists():
-            missing_dirs.append(str(full_path))
-    
-    if missing_dirs:
-        raise InitializationError(
-            f"Missing essential directories: {', '.join(missing_dirs)}.\n"
-            "These directories are required for testing."
-        )
     
     # Create __init__.py files for Python packages
     for package_dir in ["tests_suites"]:
