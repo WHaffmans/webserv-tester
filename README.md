@@ -1,44 +1,36 @@
-# Webserv Testing Framework
-
-Build ***to test & debug*** your webserv implementation.
+<h1 align="center">
+	Webserv Testing Framework
+</h1>
+<p align="center">
+	This project helped you? Give it a 🌟!
+</p>
 
 ## 🚀 Quick Start
 
 The easiest way to run tests is to simply execute the script. You can change tester options by editing variables at the top of the script.
 
 ```bash
-./run_test.sh
+./tests/run_test.sh
 ```
 
 ## 🔧 Installation
 
-The framework is designed to be self-initializing. Just running the test script will:
+Clone this repository as a submodule of your webserv project:
 
-1. Create necessary directories if they don't exist
-2. Install required Python dependencies (`requests`, `psutil`)
-3. Generate default test configuration files
-4. Auto-detect and configure CGI interpreters
+```bash
+git submodule add https://github.com/ulyssegerkens/webserv-tester.git tests
+```
 
-## 🧰 CGI Interpreter Auto-detection
-
-The tester automatically detects available CGI interpreters on your system and updates the test configuration file:
-
-- Supported script types: `.py`, `.php`, `.pl`, `.rb`, `.sh`, `.cgi`
-- The tester searches for appropriate interpreters (python3, php, perl, etc.)
-- Warnings are displayed if interpreters are missing
-- You don't need to manually edit the configuration file
-
-This ensures CGI tests work correctly on your specific environment without manual configuration.
+The framework is designed to be self-initializing. Just running the test script will init the environment, install dependencies, and detect CGI interpreters automatically.
 
 ## ⚙️ Command-line Options
+If you want to run tests directly from the Python script (instead of the shell script), you can use the command-line interface:
 
 ```
 usage: run_tests.py [-h] [--server-path SERVER_PATH] [--host HOST]
                     [--timeout TIMEOUT]
                     [--suite {basic,invalid,config,http,method,upload,cgi,edge,error,security,performance,all}]
                     [--test TEST] [--startup-delay STARTUP_DELAY]
-
-Test the webserv HTTP server implementation
 ```
 
 ## 🗂️ Test Suite
@@ -61,9 +53,7 @@ Tests are organized into features suites:
 > **Warning**: Tests are relatively strict. A lot of them are not asked in the subject. They are here to help you to implement a robust server. For example, the `InvalidConfigFileTests` ask for quite precise error log messages.
 
 ## ⚠️ Controlled Testing Environment
-> **Important:** This tester is designed to run webserv in a controlled environment with the specific configuration file (`data/conf/test.conf`) and dedicated server files directory (`data/`). It is not intended for testing independent deployments. The tester directly manages the webserv executable, its configuration, and tested data.
-
-The tests are specifically designed to work with the provided `test.conf` configuration file and will verify that your server correctly implements the features as specified in this configuration.
+This tester is designed to run webserv in a controlled environment with the specific configuration file (`data/conf/test.conf`) and dedicated server files directory (`data/`).
 
 ## 📊 Logging
 
@@ -84,40 +74,6 @@ The tester has been designed to be used as:
 4. Analyze logs in logs file. The test implementation source code is also included in log to check if it is well implemented and to have a better understanding of why it failed
 5. Fix the bug in your webserv implementation
 
-## ✏️ Writing New Tests
-
-1. Create a new test class in `tests_suites/` or add to an existing one
-2. Test methods must start with `test_`
-3. Use assertions provided by the TestCase class
-4. Group related tests in the same class
-
-Example test:
-
-```python
-from core.test_case import TestCase
-
-class MyTests(TestCase):
-    """
-    Tests specific to the configuration in test.conf:
-    location / {
-        index index.html;
-        methods GET POST;
-    }
-    """
-
-    def test_my_feature(self):
-        """Test description here."""
-        response = self.runner.send_request('GET', '/my-endpoint')
-        self.assert_equals(response.status_code, 200)
-        self.assert_true('Content-Type' in response.headers)
-```
-
 ## Contributing
 
-List of features to implement, in priority order:
-- Add a file where user can specify a list of tests to ignore (for the server feature he don't want to implement).
-- Add RFC references to tests
-- Check test implementation
-- Add 2 test modes: strict (RFC/nginx-like) and permissive (subject/correction)
-- Improve test coverage
-- Refactor test framework
+Contributions for adding new tests, improving existing ones, or enhancing the framework itself are welcome! Please read the [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute.
