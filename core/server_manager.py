@@ -46,15 +46,16 @@ class ServerManager:
             for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
                 try:
                     proc_info = proc.info
-                    if proc_info['name'] and 'webserv' in proc_info['name']:
+                    
+                    # Skip our own process
+                    if proc.pid == os.getpid():
+                        continue
+                    
+                    # Simple check: process name is exactly 'webserv'
+                    if proc_info['name'] == 'webserv':
                         existing_processes.append(proc_info)
-                    elif proc_info['cmdline']:
-                        # Check if any part of the command line contains webserv
-                        cmdline_str = ' '.join(proc_info['cmdline'])
-                        if 'webserv' in cmdline_str and proc.pid != os.getpid():
-                            existing_processes.append(proc_info)
+                            
                 except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                    # Process may have died between iterations or we don't have access
                     continue
         except Exception as e:
             self.logger.debug(f"Error checking existing processes: {e}")
@@ -80,7 +81,7 @@ class ServerManager:
                 cmdline = ' '.join(proc['cmdline']) if proc['cmdline'] else proc['name']
                 self.logger.error(f"{Colors.RED}  PID {pid}: {cmdline}{Colors.RESET}")
             self.logger.error(f"{Colors.RED}Please stop all existing webserv processes before running tests.{Colors.RESET}")
-            self.logger.error(f"{Colors.YELLOW}You can use: pkill webserv{Colors.RESET}")
+            self.logger.error(f"{Colors.YELLOW}  You can use: pkill -f webserv {Colors.RESET}")
             return False
         
         if self.process is not None:
