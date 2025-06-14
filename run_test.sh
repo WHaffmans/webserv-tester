@@ -22,12 +22,10 @@ STARTUP_DELAY=0.1
 CLEAN_LOGS="true"
 
 # -----------------------------------------
-# You can set these variables too, but they are guaranteed to work
+# You can set these variables too, but they are not guaranteed to work
 
 # Path to webserv executable
 SERVER_PATH="../webserv"
-
-# Server ports are fixed in test.conf (8080, 8081, 8082)
 
 # -----------------------------------------
 
