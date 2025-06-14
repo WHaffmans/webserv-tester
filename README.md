@@ -18,7 +18,8 @@ The easiest way to run tests is to simply execute the script. You can change tes
 Clone this repository as a submodule of your webserv project:
 
 ```bash
-git submodule add https://github.com/ulyssegerkens/webserv-tester.git tests
+cd /path/to/your/webserv
+git submodule add https://github.com/ulsgks/webserv-tester.git tests
 ```
 
 The framework is designed to be self-initializing. Just running the test script will init the environment, install dependencies, and detect CGI interpreters automatically.
