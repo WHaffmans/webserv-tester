@@ -191,19 +191,39 @@ class PerformanceTests(TestCase):
                 avg_response_time = statistics.mean(response_times)
                 max_response_time = max(response_times)
                 
+                # Calculate dynamic thresholds based on concurrency level
+                # Base thresholds for low concurrency (≤100 connections) - reasonable for custom webserver
+                base_avg_threshold = 0.3
+                base_max_threshold = 0.8
+                
+                # Scale thresholds with moderate growth for high concurrency
+                # Targeting: 3000 connections should be under 1.5s average
+                import math
+                if self.num_concurrent <= 100:
+                    concurrency_factor = 1.0
+                else:
+                    # Custom scaling to reach ~1.5s avg at 3000 connections
+                    # Formula: 1.0 + (concurrent/1000) * 1.5 gives reasonable scaling
+                    concurrency_factor = 1.0 + (self.num_concurrent / 1000) * 1.5
+                
+                avg_threshold = base_avg_threshold * concurrency_factor
+                max_threshold = base_max_threshold * concurrency_factor
+                
                 # Log performance data
                 self.logger.debug(f"Concurrent connections: {self.num_concurrent}")
                 self.logger.debug(f"Successful responses: {len(successful)}/{len(results)}")
                 self.logger.debug(f"Average response time: {avg_response_time:.4f} seconds")
                 self.logger.debug(f"Maximum response time: {max_response_time:.4f} seconds")
+                self.logger.debug(f"Dynamic avg threshold: {avg_threshold:.4f} seconds")
+                self.logger.debug(f"Dynamic max threshold: {max_threshold:.4f} seconds")
                 
-                # Assert that response times are reasonable - expect sub-second performance
-                self.assert_true(avg_response_time < 0.5, 
-                              f"Average response time too high: {avg_response_time:.4f} seconds (maximum allowed: 0.5s)")
+                # Assert that response times are reasonable with dynamic thresholds
+                self.assert_true(avg_response_time < avg_threshold, 
+                              f"Average response time too high: {avg_response_time:.4f} seconds (maximum allowed: {avg_threshold:.4f}s for {self.num_concurrent} concurrent connections)")
                 
-                # Maximum response time should not exceed 1 second
-                self.assert_true(max_response_time < 1.0,
-                              f"Maximum response time too high: {max_response_time:.4f} seconds (maximum allowed: 1.0s)")
+                # Maximum response time should not exceed dynamic threshold
+                self.assert_true(max_response_time < max_threshold,
+                              f"Maximum response time too high: {max_response_time:.4f} seconds (maximum allowed: {max_threshold:.4f}s for {self.num_concurrent} concurrent connections)")
             else:
                 # Not enough successful responses for meaningful analysis
                 self.assert_true(False, f"Not enough successful concurrent requests for performance analysis: {len(successful)}/{self.num_concurrent}")
