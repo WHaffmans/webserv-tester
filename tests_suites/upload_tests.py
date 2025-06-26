@@ -64,6 +64,7 @@ class UploadTests(TestCase):
     def _clean_uploads_directory(self):
         """Remove all files from the uploads directory."""
         uploads_dir = resolve_path('data/uploads')
+        errors = []
         if os.path.exists(uploads_dir):
             self.logger.debug(f"Cleaning uploads directory: {uploads_dir}")
             for item in os.listdir(uploads_dir):
@@ -74,12 +75,17 @@ class UploadTests(TestCase):
                         self.logger.debug(f"Removed file: {item_path}")
                     except Exception as e:
                         self.logger.debug(f"Error removing file {item_path}: {e}")
+                        errors.append(f"File: {item_path} - {e}")
                 elif os.path.isdir(item_path):
                     try:
                         shutil.rmtree(item_path)
                         self.logger.debug(f"Removed directory: {item_path}")
                     except Exception as e:
                         self.logger.debug(f"Error removing directory {item_path}: {e}")
+                        errors.append(f"Directory: {item_path} - {e}")
+        if errors:
+            self.logger.error(f"Upload directory cleanup encountered errors: {errors}")
+            raise RuntimeError(f"Upload directory cleanup failed for some items: {errors}")
     
     def test_upload_single_file(self):
         """

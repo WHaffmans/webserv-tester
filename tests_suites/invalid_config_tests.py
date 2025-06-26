@@ -43,6 +43,14 @@ class InvalidConfigTests(TestCase):
                     os.remove(config_file)
             except Exception as e:
                 self.logger.debug(f"Error removing config file {config_file}: {e}")
+        # Extra: clean up any stray files in the invalid config dir
+        for stray in self.invalid_configs_dir.glob('*.conf'):
+            try:
+                if stray.exists():
+                    os.remove(stray)
+            except Exception as e:
+                self.logger.debug(f"Error removing stray config file {stray}: {e}")
+        self.config_files = []
     
     def create_invalid_config(self, content, filename_prefix):
         """
@@ -58,14 +66,13 @@ class InvalidConfigTests(TestCase):
         # Create unique filename
         filename = f"{filename_prefix}_{int(time.time())}.conf"
         file_path = self.invalid_configs_dir / filename
-        
-        # Write content to file
-        with open(file_path, 'w') as f:
-            f.write(content)
-        
-        # Store for cleanup
-        self.config_files.append(file_path)
-        
+        try:
+            with open(file_path, 'w') as f:
+                f.write(content)
+        finally:
+            # Always add to config_files for cleanup, even if write fails
+            if file_path not in self.config_files:
+                self.config_files.append(file_path)
         return str(file_path)
     
     def run_webserv_with_config(self, config_path, test_name):

@@ -40,6 +40,7 @@ class CGITests(TestCase):
         
         # Check that scripts have execute permissions
         self._ensure_scripts_executable()
+        self._temp_files = []  # Track temp files/scripts for cleanup
     
     def _ensure_scripts_executable(self):
         """Ensure all test scripts have execute permissions."""
@@ -404,42 +405,27 @@ class CGITests(TestCase):
     
     def test_missing_permissions(self):
         """
-        Test handling of non-executable CGI scripts.
-        
-        Verifies that the server returns an appropriate error response when
-        a CGI script without execute permissions is requested.
+        Test server response when a CGI script without execute permissions is requested.
         """
         # Create a non-executable script
         nonexec_script = self.cgi_dir / 'nonexec.cgi'
-        nonexec_content = """#!/bin/sh
-echo "Content-Type: text/plain"
-echo ""
-echo "This script should not execute due to missing permissions"
-"""
+        nonexec_content = """#!/bin/sh\necho \"Content-Type: text/plain\"\necho \"\"\necho \"This script should not execute due to missing permissions\"\n"""
         try:
             # Create the script
             with open(nonexec_script, 'w') as f:
                 f.write(nonexec_content)
-            
+            self._temp_files.append(str(nonexec_script))
             # Set non-executable permissions
             nonexec_script.chmod(0o644)
-            
             # Construct URL for non-executable script
             nonexec_url = f"{self.cgi_path}/nonexec.cgi"
-            
             # Request non-executable script
             response = self.runner.send_request('GET', nonexec_url)
-            
             # Verify response - should be 403 Forbidden or 500 Internal Server Error
             self.assert_true(response.status_code in [403, 500], 
                           f"Non-executable script at {nonexec_url} returned {response.status_code} instead of 403 or 500")
-            
         except requests.RequestException as e:
             self.assert_true(False, f"Request to {nonexec_url} failed: {e}")
-        finally:
-            # Clean up
-            if os.path.exists(nonexec_script):
-                os.remove(nonexec_script)
     
     def test_script_outside_cgi_dirs(self):
         """
@@ -615,52 +601,42 @@ echo "This script should not be executed!"
     def test_custom_response_headers(self):
         """
         Test custom response headers from CGI scripts.
-        
-        Verifies that custom headers set by CGI scripts are correctly
-        passed through to the client.
         """
         # Create a custom header script
         header_script = f"{self.cgi_dir}/header.cgi"
-        header_content = """#!/bin/sh
-        echo "Content-Type: text/plain"
-        echo "X-Custom-CGI-Header: test-value-123"
-        echo "X-Test-Header: another-test-value"
-        echo ""
-        echo "This script sets custom response headers"
-        """
-        
+        header_content = """#!/bin/sh\n        echo \"Content-Type: text/plain\"\n        echo \"X-Custom-CGI-Header: test-value-123\"\n        echo \"X-Test-Header: another-test-value\"\n        echo \"\"\n        echo \"This script sets custom response headers\"\n        """
         try:
             # Create the script
             with open(header_script, 'w') as f:
                 f.write(header_content)
-            
+            self._temp_files.append(str(header_script))
             # Make it executable
             os.chmod(header_script, 0o755)
-            
             # Construct URL for the header script
             header_url = f"{self.cgi_path}/header.cgi"
-            
             # Request the header script
             response = self.runner.send_request('GET', header_url)
-            
             # Verify successful execution
             self.assert_equals(response.status_code, 200, 
                              f"CGI script at {header_url} failed with status {response.status_code}")
-            
             # Verify custom headers were passed through
             self.assert_true('X-Custom-CGI-Header' in response.headers, 
                           "Custom header X-Custom-CGI-Header not passed through")
             self.assert_equals(response.headers['X-Custom-CGI-Header'], 'test-value-123', 
                              "Custom header value incorrect")
-            
             self.assert_true('X-Test-Header' in response.headers, 
                           "Custom header X-Test-Header not passed through")
             self.assert_equals(response.headers['X-Test-Header'], 'another-test-value', 
                              "Custom header value incorrect")
-            
         except requests.RequestException as e:
             self.assert_true(False, f"Request to {header_url} failed: {e}")
-        finally:
-            # Clean up
-            if os.path.exists(header_script):
-                os.remove(header_script)
+    
+    def teardown(self):
+        """Clean up all temporary files/scripts created during tests."""
+        for path in getattr(self, '_temp_files', []):
+            try:
+                if os.path.exists(path):
+                    os.remove(path)
+            except Exception as e:
+                self.logger.debug(f"Error cleaning up temp file {path}: {e}")
+        self._temp_files = []

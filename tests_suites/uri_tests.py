@@ -37,12 +37,33 @@ class URITests(TestCase):
         """Clean up test environment after URI tests."""
         # Clean up all test files and directories created during testing
         if hasattr(self, 'test_dir') and os.path.exists(self.test_dir):
-            try:
-                # Recursively remove the entire test directory
-                shutil.rmtree(self.test_dir)
-                self.logger.debug(f"Successfully cleaned up test directory: {self.test_dir}")
-            except Exception as e:
-                self.logger.debug(f"Error cleaning up test directory: {e}")
+            for attempt in range(3):
+                try:
+                    shutil.rmtree(self.test_dir)
+                    self.logger.debug(f"Successfully cleaned up test directory: {self.test_dir}")
+                    break
+                except Exception as e:
+                    self.logger.debug(f"Error cleaning up test directory (attempt {attempt+1}): {e}")
+                    time.sleep(0.2)
+            else:
+                # Fallback: try to remove files/dirs individually
+                for root, dirs, files in os.walk(self.test_dir, topdown=False):
+                    for name in files:
+                        file_path = os.path.join(root, name)
+                        try:
+                            os.remove(file_path)
+                        except Exception as e:
+                            self.logger.debug(f"Fallback error removing file {file_path}: {e}")
+                    for name in dirs:
+                        dir_path = os.path.join(root, name)
+                        try:
+                            os.rmdir(dir_path)
+                        except Exception as e:
+                            self.logger.debug(f"Fallback error removing dir {dir_path}: {e}")
+                try:
+                    os.rmdir(self.test_dir)
+                except Exception as e:
+                    self.logger.debug(f"Fallback error removing test_dir {self.test_dir}: {e}")
         
         # Clean up any specific test files outside the main test directory
         for path in ['data/www/uri_tests/no_index', 'data/www/uri_tests/trailingslash', 'data/www/uri_tests/trailingslash.html']:
