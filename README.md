@@ -57,7 +57,7 @@ The framework provides detailed logging:
 ## 🔍 Fixing a Test
 The tester has been designed to be used as:
 1. Running a test suite with `run_test.sh`
-2. Choose a test to fix, copy its name from the "Failed tests" logs
+2. Choose a test to fix, copy its name from the "List of failed tests" logs
 3. Run the test independently by copying the test name in `run_test.sh`
 4. Analyze logs in logs file. The test implementation source code is also included in log to check if it is well implemented and to have a better understanding of why it failed
 5. Fix the bug in your webserv implementation
