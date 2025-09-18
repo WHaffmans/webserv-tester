@@ -93,9 +93,11 @@ class ServerManager:
         
         self.logger.info(f"{Emoji.START} Starting server: {self.server_path} -c {self.config_path}")
         
-        # Try with -v first, then without if it fails
+        # Try different argument formats that webserv implementations might expect
         for args in [[self.server_path, "-c", self.config_path, "-v"],
-                     [self.server_path, "-c", self.config_path]]:
+                     [self.server_path, "-c", self.config_path],
+                     [self.server_path, self.config_path],  # Config as positional argument
+                     [self.server_path]]:
             try:
                 self.process = subprocess.Popen(
                     args,
