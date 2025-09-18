@@ -34,15 +34,21 @@ usage: run_tests.py [-h] [--server-path SERVER_PATH] [--host HOST]
                     [--test TEST] [--startup-delay STARTUP_DELAY]
 ```
 
+## ⚠️ Important Notes
+
+> **Will probably not work on first try** - You'll need to modify it for your project's specific needs. 
+
+> **Uses custom nginx-like config** - Not standard. The tester is designed to run webserv in a controlled environment. Contributions to improve compatibility welcome.
+
+> **Many tests are strict and not required** - Use critical thinking, not all tests are in the subject.
+
+> **Please contribute!** - Great opportunity to to discover GitHub issues, pull requests, and collaborative development.
+
 ## 🗂️ Test Suite
 
 Tests are organized into features suites: Basic, HTTP, Config, Invalid Config, Method, CGI, Upload, Security, Performance, and Error. You can run all tests or select specific suites.
 
 > **Warning**: A lot of tests have been written with LLM and may contain some errors. Please **review tests carefully**. They could also be too permissive and return false positives.
-
-> **Warning**: Tests are relatively **strict**. A lot of them are not asked in the subject. They are here to help you to implement a robust server. For example, the `InvalidConfigFileTests` ask for quite precise error log messages.
-
-> **Warning**: This tester is designed to run webserv in a controlled **environment** with the specific configuration file (`data/conf/test.conf`) and dedicated server files directory (`data/`).
 
 ## 📊 Logging
 
