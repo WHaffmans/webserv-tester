@@ -2,8 +2,10 @@
 	Webserv Testing Framework
 </h1>
 <p align="center">
-	This project helped you? Give it a 🌟!
+	Did this project help you? Give it a 🌟!
 </p>
+
+This tester is a BETA version and will probably not work on your project on the first try. Any improvements are welcome!
 
 ## 🚀 Quick Start
 
