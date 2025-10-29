@@ -33,7 +33,7 @@ def parse_arguments():
     
     parser.add_argument('--server-path', default='./webserv',
                         help='Path to the webserv executable')
-    parser.add_argument('--host', default='127.0.0.1',
+    parser.add_argument('--host', default='localhost',
                         help='Host to connect to')
     parser.add_argument('--timeout', type=int, default=2,
                         help='Request timeout in seconds')
