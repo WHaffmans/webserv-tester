@@ -27,7 +27,7 @@ class InvalidConfigTests(TestCase):
         self.config_files = []
         
         # Path to webserv executable, relative to the tester root
-        self.webserv_path = Path("../webserv")
+        self.webserv_path = Path("../build/webserv")
         
         # Verify webserv executable exists
         if not self.webserv_path.exists():

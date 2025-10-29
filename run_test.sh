@@ -25,7 +25,7 @@ CLEAN_LOGS="true"
 # You can set these variables too, but they are not guaranteed to work
 
 # Path to webserv executable
-SERVER_PATH="../webserv"
+SERVER_PATH="../build/webserv"
 
 # -----------------------------------------
 
