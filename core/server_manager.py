@@ -88,9 +88,6 @@ class ServerManager:
         
         # Open log files
         timestamp = time.strftime("%Y%m%d-%H%M%S")
-        self.stdout_file = open(log_dir / f"server-{timestamp}.out", "w")
-        self.stderr_file = open(log_dir / f"server-{timestamp}.err", "w")
-        
         self.logger.info(f"{Emoji.START} Starting server: {self.server_path} -c {self.config_path}")
         
         # Try different argument formats that webserv implementations might expect
@@ -99,6 +96,9 @@ class ServerManager:
                      [self.server_path, self.config_path],  # Config as positional argument
                      [self.server_path]]:
             try:
+                self.stdout_file = open(log_dir / f"server-{timestamp}.out", "w")
+                self.stderr_file = open(log_dir / f"server-{timestamp}.err", "w")
+                
                 self.process = subprocess.Popen(
                     args,
                     stdout=self.stdout_file,
