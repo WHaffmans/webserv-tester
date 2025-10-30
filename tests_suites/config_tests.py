@@ -74,7 +74,7 @@ class ConfigTests(TestCase):
         for server_name in server_names:
             try:
                 # Send request with the specific Host header
-                response = self.runner.send_request('GET', '/', headers={'Host': server_name})
+                response = self.runner.send_request('GET', '/', headers={'Host': server_name + ':8080'})
                 
                 # Should return 200 OK
                 self.assert_equals(response.status_code, 200, 
