@@ -44,7 +44,7 @@ class HttpTests(TestCase):
     def test_http_10_support(self):
         """Test HTTP/1.0 backward compatibility."""
         # Send a raw HTTP request with HTTP/1.0
-        request = "GET / HTTP/1.0\r\n\r\n"
+        request = "GET / HTTP/1.0\r\nHost: localhost:8080\r\n\r\n"
         response = self.runner.send_raw_request(request)
         
         # Check response starts with HTTP/1.0 or HTTP/1.1
