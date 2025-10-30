@@ -34,7 +34,7 @@ class HttpTests(TestCase):
     def test_http_version_support(self):
         """Test HTTP/1.1 support."""
         # Send a raw HTTP request with HTTP/1.1
-        request = "GET / HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n"
+        request = "GET / HTTP/1.1\r\nHost: localhost:8080\r\nConnection: close\r\n\r\n"
         response = self.runner.send_raw_request(request)
         
         # Check response starts with HTTP/1.1
@@ -54,7 +54,7 @@ class HttpTests(TestCase):
     def test_invalid_http_version(self):
         """Test handling of invalid HTTP version."""
         # Send a raw HTTP request with invalid version
-        request = "GET / HTTP/9.9\r\nHost: localhost\r\nConnection: close\r\n\r\n"
+        request = "GET / HTTP/9.9\r\nHost: localhost:8080\r\nConnection: close\r\n\r\n"
         response = self.runner.send_raw_request(request)
         
         # Should respond with 505 HTTP Version Not Supported or 400 Bad Request
@@ -76,7 +76,7 @@ class HttpTests(TestCase):
         # Create a chunked request
         request = (
             "POST / HTTP/1.1\r\n"
-            "Host: localhost\r\n"
+            "Host: localhost:8080\r\n"
             "Connection: close\r\n"
             "Transfer-Encoding: chunked\r\n"
             "Content-Type: text/plain\r\n"
@@ -121,7 +121,7 @@ class HttpTests(TestCase):
     def test_malformed_request_line(self):
         """Test handling of malformed request line."""
         # Send a raw HTTP request with malformed request line
-        request = "INVALID / HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n"
+        request = "INVALID / HTTP/1.1\r\nHost: localhost:8080\r\nConnection: close\r\n\r\n"
         response = self.runner.send_raw_request(request)
         
         # Should respond with 400 Bad Request or 501 Not Implemented
@@ -131,7 +131,7 @@ class HttpTests(TestCase):
     def test_malformed_headers(self):
         """Test handling of malformed headers."""
         # Send a raw HTTP request with malformed headers
-        request = "GET / HTTP/1.1\r\nMalformed-Header\r\nHost: localhost\r\nConnection: close\r\n\r\n"
+        request = "GET / HTTP/1.1\r\nMalformed-Header\r\nHost: localhost:8080\r\nConnection: close\r\n\r\n"
         response = self.runner.send_raw_request(request)
         
         # Should respond with 400 Bad Request
@@ -178,7 +178,7 @@ class HttpTests(TestCase):
                             break
             
             # Send second request on same connection
-            request2 = "GET /favicon.ico HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n"
+            request2 = "GET /favicon.ico HTTP/1.1\r\nHost: localhost:8080\r\nConnection: close\r\n\r\n"
             sock.sendall(request2.encode('utf-8'))
             
             # Read response
@@ -267,7 +267,7 @@ class HttpTests(TestCase):
     def test_400_bad_request(self):
         """Test 400 Bad Request for malformed requests."""
         # We already test this in test_malformed_headers, but add a direct test
-        request = "GET / HTTP/1.1\r\nBadly-Formed:: Header\r\nHost: localhost\r\nConnection: close\r\n\r\n"
+        request = "GET / HTTP/1.1\r\nBadly-Formed:: Header\r\nHost: localhost:8080\r\nConnection: close\r\n\r\n"
         response = self.runner.send_raw_request(request)
         self.assert_true('400' in response[:20], "Expected 400 Bad Request for malformed header")
     
@@ -282,7 +282,7 @@ class HttpTests(TestCase):
         """
         # Test /small_limit on port 8082 which has a 50KB limit
         large_body = 'X' * (60 * 1024)  # 60KB (above 50KB limit)
-        headers = {'Host': 'localhost', 'Content-Type': 'text/plain'}
+        headers = {'Host': f'localhost:{self.ALT_PORT_2}', 'Content-Type': 'text/plain'}
         url = f"http://{self.runner.host}:{self.ALT_PORT_2}/small_limit"
         
         try:
@@ -367,7 +367,7 @@ class HttpTests(TestCase):
         # We need to use raw socket for this test
         request = (
             "GET / HTTP/1.1\r\n"
-            "Host: localhost\r\n"
+            "Host: localhost:8080\r\n"
             "Connection: close\r\n"
             "X-Custom-Header: value1\r\n"
             "X-Custom-Header: value2\r\n"
@@ -388,7 +388,7 @@ class HttpTests(TestCase):
         # Folded headers are deprecated in HTTP/1.1 but should be handled
         request = (
             "GET / HTTP/1.1\r\n"
-            "Host: localhost\r\n"
+            "Host: localhost:8080\r\n"
             "Connection: close\r\n"
             "X-Folded-Header: part1\r\n"
             " part2\r\n"
@@ -409,7 +409,7 @@ class HttpTests(TestCase):
     def test_absolute_url_in_request(self):
         """Test handling of absolute URLs in request line."""
         # Send a request with an absolute URL in the request line
-        request = f"GET http://{self.runner.host}:{self.DEFAULT_PORT}/ HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n"
+        request = f"GET http://{self.runner.host}:{self.DEFAULT_PORT}/ HTTP/1.1\r\nHost: localhost:8080\r\nConnection: close\r\n\r\n"
         
         try:
             response = self.runner.send_raw_request(request)
@@ -424,8 +424,8 @@ class HttpTests(TestCase):
         """Test maximum length for request line."""
         # Create a request with a very long path
         long_path = '/' + 'a' * 8000
-        request = f"GET {long_path} HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n"
-        
+        request = f"GET {long_path} HTTP/1.1\r\nHost: localhost:8080\r\nConnection: close\r\n\r\n"
+
         try:
             response = self.runner.send_raw_request(request)
             
