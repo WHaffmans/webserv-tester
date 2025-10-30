@@ -9,7 +9,7 @@
 # http, method, upload, uri, redirect,
 # cgi, cookie,
 # security, performance
-SUITE="all"
+SUITE="${1:-all}"
 
 # Set to empty string to run full suite, or specify a test name
 # Example: SINGLE_TEST="test_server_running"
