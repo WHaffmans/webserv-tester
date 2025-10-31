@@ -201,7 +201,7 @@ class InvalidConfigTests(TestCase):
         config_content = """
         # Config without server blocks
         client_max_body_size 1m;
-        worker_processes 4;
+        
         """
         config_path = self.create_invalid_config(config_content, "no_server_block")
         
