@@ -692,6 +692,7 @@ class InvalidConfigTests(TestCase):
         config_content = f"""
         server {{
             listen 8080;
+            host 0.0.0.0;
             server_name {long_name};
             root www;
         }}
@@ -1017,11 +1018,12 @@ class InvalidConfigTests(TestCase):
         config_content = """
         server {
             listen 8080;
+            host 0.0.0.0;
             root www;
             
             location /cgi-bin {
                 cgi_handler php /usr/bin/php;  # Missing dot before extension
-                methods GET POST;
+                allowed_methods GET POST;
             }
         }
         """
