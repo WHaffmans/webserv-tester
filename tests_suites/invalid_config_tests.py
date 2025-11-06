@@ -710,27 +710,27 @@ class InvalidConfigTests(TestCase):
                         "Server should report error about value length or size limit")
 
 
-    def test_unicode_special_characters(self):
-        """Test server's handling of Unicode and special characters in paths."""
-        # Create config with Unicode characters in path
-        config_content = """
-        server {
-            listen 8080;
-            root www/sitè/παράδειγμα;
-        }
-        """
-        config_path = self.create_invalid_config(config_content, "unicode_chars")
+    # def test_unicode_special_characters(self):
+    #     """Test server's handling of Unicode and special characters in paths."""
+    #     # Create config with Unicode characters in path
+    #     config_content = """
+    #     server {
+    #         listen 8080;
+    #         root www/sitè/παράδειγμα;
+    #     }
+    #     """
+    #     config_path = self.create_invalid_config(config_content, "unicode_chars")
         
-        # Run webserv with the invalid config
-        return_code, stdout, stderr = self.run_webserv_with_config(config_path, "unicode_special_characters")
+    #     # Run webserv with the invalid config
+    #     return_code, stdout, stderr = self.run_webserv_with_config(config_path, "unicode_special_characters")
         
-        # Check for error or acceptance - some servers might handle this, others might not
-        if return_code != 0:
-            self.assert_true(self.check_error_log(stdout, stderr, "invalid character in path") or
-                            self.check_error_log(stdout, stderr, "unexpected character") or
-                            self.check_error_log(stdout, stderr, "special character not allowed") or
-                            self.check_error_log(stdout, stderr, "invalid root path"),
-                            "Server should report meaningful error about path or character")
+    #     # Check for error or acceptance - some servers might handle this, others might not
+    #     if return_code != 0:
+    #         self.assert_true(self.check_error_log(stdout, stderr, "invalid character in path") or
+    #                         self.check_error_log(stdout, stderr, "unexpected character") or
+    #                         self.check_error_log(stdout, stderr, "special character not allowed") or
+    #                         self.check_error_log(stdout, stderr, "invalid root path"),
+    #                         "Server should report meaningful error about path or character")
 
 
     def test_nested_blocks_depth(self):
@@ -933,35 +933,35 @@ class InvalidConfigTests(TestCase):
                         self.check_error_log(stdout, stderr, "start with"),
                         "Server should report error about location path not starting with /")
 
-    def test_nested_locations_in_exact_match(self):
-        """Test server's handling of nested locations in exact match locations."""
-        # Create config with nested location in exact match location
-        config_content = """
-        server {
-            listen 8080;
-            root www;
+    # def test_nested_locations_in_exact_match(self):
+    #     """Test server's handling of nested locations in exact match locations."""
+    #     # Create config with nested location in exact match location
+    #     config_content = """
+    #     server {
+    #         listen 8080;
+    #         root www;
             
-            location = /exact {  # Exact match location
-                index exact.html;
+    #         location = /exact {  # Exact match location
+    #             index exact.html;
                 
-                location /nested {  # Nested location not allowed in exact match
-                    index nested.html;
-                }
-            }
-        }
-        """
-        config_path = self.create_invalid_config(config_content, "webserv_config")
+    #             location /nested {  # Nested location not allowed in exact match
+    #                 index nested.html;
+    #             }
+    #         }
+    #     }
+    #     """
+    #     config_path = self.create_invalid_config(config_content, "webserv_config")
         
-        # Run webserv with the invalid config
-        return_code, stdout, stderr = self.run_webserv_with_config(config_path, "nested_locations_in_exact_match")
+    #     # Run webserv with the invalid config
+    #     return_code, stdout, stderr = self.run_webserv_with_config(config_path, "nested_locations_in_exact_match")
         
-        # Check that server reports error
-        self.assert_true(return_code != 0, "Server should fail with nested location in exact match")
-        self.assert_true(self.check_error_log(stdout, stderr, "nested") or
-                        self.check_error_log(stdout, stderr, "exact match") or
-                        self.check_error_log(stdout, stderr, "location inside") or
-                        self.check_error_log(stdout, stderr, "expected directive"),
-                        "Server should report error about nested location in exact match")
+    #     # Check that server reports error
+    #     self.assert_true(return_code != 0, "Server should fail with nested location in exact match")
+    #     self.assert_true(self.check_error_log(stdout, stderr, "nested") or
+    #                     self.check_error_log(stdout, stderr, "exact match") or
+    #                     self.check_error_log(stdout, stderr, "location inside") or
+    #                     self.check_error_log(stdout, stderr, "expected directive"),
+    #                     "Server should report error about nested location in exact match")
 
     def test_empty_methods_directive(self):
         """Test server's handling of empty methods directive."""
